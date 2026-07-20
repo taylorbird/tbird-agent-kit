@@ -34,8 +34,12 @@ script.
 - [ ] `plugins/tbird-claudetools/skills/session-status/SKILL.md`
       (migrate `~/.claude/commands/session-status.md`)
 - [ ] Commit + push
-- [ ] Install & test: `/plugin marketplace add taylorbird/tbird-agent-kit`
+- [ ] Install & test. NOTE: default `github.com` SSH on this machine resolves to
+      the WORK account (`taylorbirdbumphealth`), which can't read this personal
+      repo. Use the personal SSH alias URL, not the `owner/repo` shorthand:
+      `/plugin marketplace add git@github.com-personal:taylorbird/tbird-agent-kit.git`
       then `/plugin install tbird-claudetools@tbird-agent-kit`
+      (This repo's git remote is already set to `git@github.com-personal:...`.)
 - [ ] Verify each skill works, then retire old `~/.claude/commands/*.md` + `setup-claude`
 
 ## Verify during build
