@@ -1,0 +1,11 @@
+{
+  "name": "tbird-agent-kit",
+  "owner": { "name": "Taylor Bird", "email": "taylor.bird@bumpboxes.com" },
+  "plugins": [
+    {
+      "name": "tbird-claudetools",
+      "source": "./plugins/tbird-claudetools",
+      "description": "Project work-state and session-continuity skills"
+    }
+  ]
+}
