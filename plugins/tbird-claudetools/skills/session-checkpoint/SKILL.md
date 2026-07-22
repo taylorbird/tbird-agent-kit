@@ -1,12 +1,15 @@
 ---
 name: session-checkpoint
-description: Use before ending a session, taking a break, or when the user wants to save session work-state — updates current.md, log.md, questions.md, learnings, and candidate preferences via a Sonnet agent team. Triggers on "checkpoint", "save session state", "before I go", "/session-checkpoint".
+description: Use before ending a session, taking a break, or when the user wants to save session work-state — updates current.md, log.md, questions.md, learnings, and candidate preferences via a single Sonnet subagent. Triggers on "checkpoint", "save session state", "before I go", "/session-checkpoint".
 ---
 
-Checkpoint the session using a coordinated agent team (Workflow tool), with
-all agents running on the **Sonnet** model.
+Checkpoint the session by handing one dense brief to a **single Sonnet
+subagent** (the Agent tool, `model: sonnet`) that updates every work-state file
+sequentially. One agent, one copy of the brief — the file targets are disjoint
+and small, so parallelism would only buy a few seconds of wall-clock at the cost
+of duplicating the brief across several agent contexts.
 
-## 1. Compose the session brief (main thread — you have the context, agents don't)
+## 1. Compose the session brief (main thread — you have the context, the agent doesn't)
 
 Write one dense brief covering this session: what was worked on, decisions
 made (with rationale), actions taken, findings, anything future sessions need,
@@ -16,12 +19,13 @@ candidate standing preferences or observations about how the user likes to work
 that you picked up this session (distinct from technical learnings) — for the
 preferences file. Include the current date/time (run `date "+%Y-%m-%d %H:%M %Z"`).
 
-Agents receive ONLY what you put in their prompts — every fact they need must
-be in the brief. Do not assume they can see the conversation.
+The agent receives ONLY what you put in its prompt — every fact it needs must
+be in the brief. Do not assume it can see the conversation.
 
-## 2. Build the job list
+## 2. Build the per-file instructions
 
-One job per file that needs updating (skip files with nothing to change):
+Include instructions for each file that needs updating (tell the agent to skip
+any file with nothing to change):
 
 - **`.claude/work/current.md`**: Read the file first. Keep Project/Objective
   (update only if refined). Preserve the Constraints section — add any new hard
@@ -63,41 +67,24 @@ Capture ALL learnings AND candidate preferences you identified yourself; do NOT
 ask the user whether there are any to capture, and do NOT ask them to verify the
 ones you captured (they review the preferences file on their own).
 
-Each job's prompt = the full session brief + that file's instructions + the
-absolute file path. Each agent must end by reporting what it changed.
-
-## 3. Run the checkpoint team
+## 3. Run the checkpoint agent
 
 **Before launching, announce the model on its own line so the user can catch
-it:** `> Checkpoint team running on model: sonnet`. This is informational only —
+it:** `> Checkpoint agent running on model: sonnet`. This is informational only —
 do not change or remove the model pin; just surface it every run.
 
-Call the Workflow tool with `args` set to `{ "jobs": [{ "label": ..., "prompt": ... }, ...] }`
-and this script:
+Launch **one** subagent with the Agent tool, `model: sonnet`. Its prompt =
+the full session brief + the per-file instructions from step 2 + the absolute
+path of each file to update. Instruct it to:
 
-```js
-export const meta = {
-  name: 'session-checkpoint',
-  description: 'Update session work-state files in parallel via a Sonnet agent team',
-  phases: [{ title: 'Checkpoint', detail: 'one agent per work file', model: 'sonnet' }],
-}
-phase('Checkpoint')
-// args arrives as a JSON string in this environment — parse defensively
-const parsed = typeof args === 'string' ? JSON.parse(args) : args
-const jobs = Array.isArray(parsed) ? parsed : (parsed && parsed.jobs) || []
-if (jobs.length === 0) throw new Error('no checkpoint jobs provided in args')
-const results = await parallel(jobs.map((job) => () =>
-  agent(job.prompt, { label: job.label, phase: 'Checkpoint', model: 'sonnet' })
-))
-return results.map((r, i) => ({ file: jobs[i].label, report: r || 'AGENT FAILED — verify this file manually' }))
-```
-
-File targets are disjoint — no isolation needed.
+- Read each target file before editing it.
+- Update the files sequentially (they're disjoint — order doesn't matter).
+- End by reporting, per file, what it changed (or that it skipped it).
 
 ## 4. Confirm
 
-When the workflow returns, check each per-file report (re-run or fix any
-failures yourself), then say:
+When the agent returns, check its per-file report (fix or re-run any file it
+failed to update yourself), then say:
 "Checkpointed. Next session: {first next action}"
 
 If you appended anything to `.claude/work/preferences.md` this run, list those
