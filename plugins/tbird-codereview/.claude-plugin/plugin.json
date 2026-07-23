@@ -1,0 +1,5 @@
+{
+  "name": "tbird-codereview",
+  "description": "Coordinated multi-reviewer code-review team that gates PR merge on unanimous agreement",
+  "version": "0.1.0"
+}

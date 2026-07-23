@@ -6,6 +6,11 @@
       "name": "tbird-claudetools",
       "source": "./plugins/tbird-claudetools",
       "description": "Project work-state and session-continuity skills"
+    },
+    {
+      "name": "tbird-codereview",
+      "source": "./plugins/tbird-codereview",
+      "description": "Coordinated multi-reviewer code-review team that gates PR merge on unanimous agreement"
     }
   ]
 }
