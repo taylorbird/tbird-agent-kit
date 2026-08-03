@@ -20,6 +20,44 @@ Standing user preferences and observations about how the user likes to work are
 not part of this checkpoint — Claude Code's built-in auto-memory owns those;
 save them yourself from the main thread.
 
+## 1b. First checkpoint in a repo? Scaffold what's missing
+
+If `.claude/work/current.md` doesn't exist, create the tree before running the
+agent (never overwrite anything that exists):
+
+- Directories: `.claude/work/`, `.claude/rules/`, `.claude/learnings/`, `.claude/archive/`
+- `.claude/work/current.md` — section skeleton: Project / Objective /
+  Constraints (start with "Full ledger: .claude/work/constraints.md. Path-scoped
+  rules: .claude/rules/.") / Current Focus / Last Checkpoint / Next Actions.
+  The first checkpoint fills Project and Objective from what this session
+  established.
+- `.claude/work/constraints.md` — header: "# Constraints Ledger" + one line
+  noting entries carry date + rationale and one-liners live in current.md
+- `.claude/work/log.md` — "# Work Log" + "<!-- Entries prepended, newest first -->"
+- `.claude/work/questions.md` — "# Open Questions"
+- `.claude/CLAUDE.md` — if absent, create:
+
+  ```markdown
+  # Project Instructions
+
+  ## Session Management
+  Active work state: @.claude/work/current.md
+
+  On session start, read .claude/work/current.md to understand current state.
+  Use /session-checkpoint before ending sessions. Use /session-resume to continue work.
+
+  ## Durable knowledge
+  - .claude/work/constraints.md — durable decisions and hard rules (full ledger)
+  - .claude/rules/ — path-scoped rules, auto-loaded when matching files are touched
+  - .claude/learnings/ — technical gotchas by topic
+
+  ## Project-Specific Context
+  <!-- Project-specific instructions only. No generic best practices. -->
+  ```
+- If `.gitignore` exists without a `.claude/work/` mention, append the
+  commented opt-out (`# .claude/work/` under a "Claude Code work state" note)
+  so the user can choose whether to track work state.
+
 ## 2. Per-file instructions (tell the agent to skip any file with nothing to change)
 
 **Size contract: `.claude/work/current.md` stays under ~60 lines.** This skill

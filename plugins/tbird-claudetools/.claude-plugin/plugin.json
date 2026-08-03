@@ -1,5 +1,5 @@
 {
   "name": "tbird-claudetools",
-  "description": "Scaffold, checkpoint, resume, and status skills for project work-state",
-  "version": "0.3.0"
+  "description": "Checkpoint, resume, status, and migration skills for project work-state (checkpoint scaffolds new repos)",
+  "version": "0.4.0"
 }
