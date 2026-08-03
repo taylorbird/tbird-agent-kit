@@ -7,12 +7,11 @@ Starting a new project. Set up the work state.
 
 ## 0. Scaffold `.claude/` if missing
 
-Before initializing, make sure the work-state tree exists. Create any directory
-or seed file that is **absent**. If a file already **exists**, do NOT overwrite
-it — show the user the path and ask before replacing it (they may have real work
-in it). Create the following:
+Create any directory or seed file that is **absent**. If a file already
+**exists**, don't overwrite it — show the user the path and ask first (it may
+hold real work).
 
-Directories: `.claude/standards/`, `.claude/work/`, `.claude/learnings/`, `.claude/archive/`.
+Directories: `.claude/work/`, `.claude/rules/`, `.claude/learnings/`, `.claude/archive/`.
 
 **`.claude/CLAUDE.md`**
 ```markdown
@@ -22,23 +21,20 @@ Directories: `.claude/standards/`, `.claude/work/`, `.claude/learnings/`, `.clau
 Active work state: @.claude/work/current.md
 
 On session start, read .claude/work/current.md to understand current state.
-Use /session-checkpoint before ending sessions. Use /session-resume to continue work.
+Use /session-checkpoint before ending sessions, /session-resume to continue work.
 
-## Standards
-@.claude/standards/code-style.md
-@.claude/standards/security.md
-@.claude/standards/testing.md
-@.claude/standards/infrastructure.md
-
-## Learnings
-Project-specific technical knowledge: @.claude/learnings/
-Capture durable insights here as you discover them (API quirks, integration gotchas, patterns that work).
+## Durable knowledge
+- .claude/work/constraints.md — durable decisions and hard rules (full ledger)
+- .claude/rules/ — path-scoped rules, auto-loaded when matching files are touched
+- .claude/learnings/ — technical gotchas by topic (API quirks, integration gotchas, patterns that work)
 
 ## Project-Specific Context
-<!-- Add project-specific instructions below -->
+<!-- Project-specific instructions only. No generic best practices — they cost
+     context and the model already knows them. -->
 ```
 
-**`.claude/work/current.md`**
+**`.claude/work/current.md`** — keep this file under ~60 lines at all times;
+detail lives in constraints.md / rules / learnings, history in log.md.
 ```markdown
 # Current State
 
@@ -48,6 +44,11 @@ Capture durable insights here as you discover them (API quirks, integration gotc
 ## Objective
 (not set)
 
+## Constraints
+Full ledger: .claude/work/constraints.md. Path-scoped rules: .claude/rules/.
+
+(one-liners for the always-on hard rules go here)
+
 ## Current Focus
 (none)
 
@@ -56,6 +57,15 @@ Capture durable insights here as you discover them (API quirks, integration gotc
 
 ## Next Actions
 (none)
+```
+
+**`.claude/work/constraints.md`**
+```markdown
+# Constraints Ledger
+
+Durable decisions and hard rules, organized by topic, each with date and
+rationale. One-line summaries of the always-on rules live in current.md;
+path-scoped rules live in .claude/rules/ and are not duplicated here.
 ```
 
 **`.claude/work/log.md`**
@@ -76,182 +86,33 @@ Capture durable insights here as you discover them (API quirks, integration gotc
 ```markdown
 # Learnings
 
-Durable, reusable technical knowledge discovered during this project.
-
-## How to use
-- Create one file per topic: `{topic}.md` (e.g., `pverify-api.md`, `stytch-m2m.md`)
-- Capture things you'd want to know if starting fresh: API quirks, gotchas, patterns that work, things that don't
-- Keep entries concise and actionable — not a journal, but a reference
-- Updated during /session-checkpoint when new learnings are identified
-- Consolidated into archive on /project-close
-
-## Format per file
-```markdown
-# {Topic}
-
-## Key Facts
-- {fact}
-
-## Gotchas
-- {gotcha}
-
-## Patterns That Work
-- {pattern}
-```
+Durable, reusable technical knowledge discovered during this project — one
+file per topic (e.g. `stytch-m2m.md`). Capture what you'd want to know
+starting fresh: API quirks, gotchas, patterns that work. Concise reference,
+not a journal. Updated during /session-checkpoint; consolidated on
+/project-close.
 ```
 
-**`.claude/standards/code-style.md`**
-```markdown
-# Code Style Standards
-
-<!-- Customize for your organization -->
-
-## General
-- Keep functions small and focused
-- Prefer explicit over implicit
-
-## JavaScript/TypeScript
-- 2-space indentation
-- Single quotes
-- Semicolons required
-- Prefer const, then let, never var
-- Use async/await over raw promises
-
-## Naming
-- camelCase: variables, functions
-- PascalCase: classes, components, types
-- SCREAMING_SNAKE: constants
-- kebab-case: file names
-
-## Comments
-- Explain WHY, not WHAT
-- JSDoc for public APIs
-- TODO format: `// TODO(name): description`
-```
-
-**`.claude/standards/security.md`**
-```markdown
-# Security Standards
-
-<!-- Customize for your organization -->
-
-## Secrets Management
-- Never commit secrets
-- Use environment variables or secret managers
-- Never log sensitive data
-- Rotate credentials regularly
-
-## Input Validation
-- Validate all external input
-- Use schema validation (Zod, Joi)
-- Sanitize before database operations
-
-## Authentication
-- Use established libraries (don't roll your own)
-- Implement proper session management
-- Use secure token storage
-
-## Dependencies
-- Review new dependencies before adding
-- Keep dependencies updated
-- Monitor for vulnerabilities
-```
-
-**`.claude/standards/testing.md`**
-```markdown
-# Testing Standards
-
-<!-- Customize for your organization -->
-
-## Coverage
-- Aim for meaningful coverage, not arbitrary percentages
-- Critical paths must be tested
-
-## Unit Tests
-- Test one thing per test
-- Use descriptive test names
-- Arrange-Act-Assert pattern
-
-## Integration Tests
-- Test real interactions where practical
-- Use test databases, not mocks, for data layer
-
-## File Naming
-- `*.test.ts` or `*.spec.ts`
-- Co-locate with source or in `__tests__/`
-
-## Test Naming
-- describe: component or function name
-- it: "should {expected} when {condition}"
-```
-
-**`.claude/standards/infrastructure.md`**
-```markdown
-# Infrastructure Standards
-
-<!-- Customize for your organization -->
-
-## General
-- Infrastructure as code (always)
-- Document manual steps if unavoidable
-- Use consistent naming conventions
-
-## AWS
-- Tag all resources
-- Use least-privilege IAM
-- Enable CloudTrail
-
-## Pulumi/IaC
-- Stack naming: {env}-{service}-{region}
-- Use typed configuration
-- Keep stacks focused (don't monolith)
-
-## Logging & Observability
-- Structured logging (JSON)
-- Include correlation IDs
-- Log at appropriate levels
-```
-
-**`.gitignore`** — keep this step. If `.gitignore` exists and does not already
-contain `.claude/work/`, append:
+**`.gitignore`** — if it exists and does not already contain `.claude/work/`, append:
 ```
 # Claude Code work state (optional - remove if you want to track)
 # .claude/work/
 ```
-If `.gitignore` does not exist, create it with those two lines.
-
-Do **not** create `preferences.md` — session-checkpoint creates it on first write.
+If it does not exist, create it with those two lines.
 
 ## 1. Check for existing work
 
-Read `.claude/work/current.md`. If there's an active project (Project field is not "(none active)"):
-- Ask if I want to archive it first with /project-close
-- Or confirm I want to abandon it
+Read `.claude/work/current.md`. If there's an active project (Project field is
+not "(none active)"), ask whether to archive it first with /project-close or
+abandon it.
 
 ## 2. Initialize work files
 
-Update `.claude/work/current.md`:
-```markdown
-# Current State
-
-## Project
-{project name from argument}
-
-## Objective
-{extract or ask for 1-2 sentence objective}
-
-## Constraints
-{any hard rules / guardrails stated for this project — e.g. "no git", "never touch prod", "never leak PHI to clients". One bullet each. If none stated, write "None yet."}
-
-## Current Focus
-Initial planning and setup
-
-## Last Checkpoint
-{current date and time} - Project initialized
-
-## Next Actions
-1. {suggest 2-3 initial actions based on the project description}
-```
+Update `.claude/work/current.md`: set Project (from argument), Objective
+(extract or ask, 1–2 sentences), Constraints (one bullet per hard rule stated
+for this project, or "None yet."), Current Focus ("Initial planning and
+setup"), Last Checkpoint (current date/time + "Project initialized"), and 2–3
+suggested Next Actions based on the project description.
 
 ## 3. Start the log
 

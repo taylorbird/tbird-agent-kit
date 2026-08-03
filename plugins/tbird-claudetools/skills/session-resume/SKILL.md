@@ -8,15 +8,18 @@ Read the work state and get me back up to speed:
 1. Read .claude/work/current.md
 2. Read the most recent 1-2 entries in .claude/work/log.md
 3. Check .claude/work/questions.md for blockers
-4. List the topic files in .claude/learnings/ (if the dir exists), and read its README.md if present
+4. List the topic files in .claude/learnings/ and the rule files in .claude/rules/ (if those dirs exist)
+
+Do NOT read .claude/work/constraints.md or the archive up front — they load on
+demand when the work touches their topics.
 
 Tell me:
 - **Project**: {name} — {objective}
-- **Constraints**: {the Constraints section from current.md, verbatim — omit this line only if there is no Constraints section}
+- **Constraints**: {the always-on list from current.md; note that the full ledger is .claude/work/constraints.md — omit this line if there is no Constraints section}
 - **Last checkpoint**: {date/time}
 - **Where we left off**: {current focus and last actions}
 - **Next up**: {next action from list}
 - **Open questions**: {any blockers or questions, or "None"}
-- **Learnings on file**: {comma-separated .claude/learnings topic names, or "None"}
+- **On file**: {comma-separated .claude/learnings topic names and .claude/rules file names, or "None"}
 
 Then ask: "Continue with '{next action}', or something else?"
