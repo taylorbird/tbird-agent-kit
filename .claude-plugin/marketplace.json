@@ -11,6 +11,11 @@
       "name": "tbird-codereview",
       "source": "./plugins/tbird-codereview",
       "description": "Coordinated multi-reviewer code-review team that gates PR merge on unanimous agreement"
+    },
+    {
+      "name": "tbird-planning",
+      "source": "./plugins/tbird-planning",
+      "description": "Planning and debugging skills (brainstorming, writing-plans, systematic-debugging) adapted from obra/superpowers for Claude 5-generation models"
     }
   ]
 }
