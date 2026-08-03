@@ -15,7 +15,7 @@
     {
       "name": "tbird-planning",
       "source": "./plugins/tbird-planning",
-      "description": "Planning and debugging skills (brainstorming, writing-plans, systematic-debugging) adapted from obra/superpowers for Claude 5-generation models"
+      "description": "Planning and debugging skills (writing-plans, systematic-debugging) adapted from obra/superpowers for Claude 5-generation models"
     }
   ]
 }
